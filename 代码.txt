@@ -1,0 +1,695 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <windows.h>//system("cls");清屏
+#include <string.h> 
+#pragma warning( disable : 4996)
+
+
+struct work {       //员工信息结构体
+	int Number;     //职工号号
+	char name[20];     //姓名
+	char sex;           // 性别
+	char  date[20];       // 出生年月
+	char education[20]; //学历
+	float wages;        //工资
+	char  addr[20];     //住址
+	int Tel;      //电话
+};
+struct work worker[100], worker1;
+
+//功能函数声明
+
+void menu();  //主菜单
+void input();  //输入员工信息
+void save(int m);   //存储信息
+int  read();    // 读取信息
+void display();//浏览信息
+void add();   //添加
+void search();  //查找
+void search_name();  //按姓名查找
+void search_NUMS();  //按职工号查找
+void Delete();  //删除操作
+void change();  //修改操作
+void sort();   //排序操作
+void sort_Num();  //按职工号排序      浏览信息时按照职工号由小到大顺序排序
+
+//主函数
+
+int main()
+{
+	system("color F4");       //设置输出字体及背景颜色
+	int n;
+	while (1)    //正常程序里，用来等待中断的产生
+	{
+
+		menu();      //调用菜单函数
+		printf("尊敬的领导，请您输入你需要操作的序号(1-8):  ");
+		scanf("%d", &n);
+		if (n == 0)
+		{
+			printf("输入错误，请重新输入！\n");
+			system("pause");
+			fflush(stdin);
+			continue;
+		}
+
+		switch (n) {
+		case 1:   system("cls");
+			printf("\n");
+			printf("\t\t\t  录入职工信息\n\n");
+			input();
+			break;         //执行到相应程序跳出switch
+		case 2:   system("cls");
+			printf("\n");
+			printf("\t\t\t\t浏览职工信息\n");
+			display();
+			printf("\n按Enter键继续\n");
+			getchar();
+			getchar();
+			system("cls");
+			break;          //执行到相应程序跳出switch
+		case 3:   system("cls");
+			printf("\n");
+			printf("\t\t\t\t查询职工信息\n");
+			search();
+			break;          //执行到相应程序跳出switch  
+		case 4:   system("cls");
+			printf("\n");
+			printf("\t\t\t\t删除职工信息\n\n");
+			Delete();
+		case 5:   system("cls");
+			printf("\n");
+			printf("\t\t\t\t修改职工信息\n");
+			display();                     //调用浏览函数  
+			change();
+			break;          //执行到相应程序跳出switch
+		case 6:   system("cls");
+			printf("\n");
+			printf("\t\t职工信息排序\n");
+			sort();
+			break;          //执行到相应程序跳出switch
+		case 7:   system("cls");
+			printf("\n");
+			printf("\t\t添加职工信息\n\n");
+			add();
+			break;          //执行到相应程序跳出switch
+		case 8:	  system("cls");
+			printf("\n\n\n\n\n\n\t\t\tThank you for using !\n\n\n\n\n\n");
+			getchar();
+			getchar();
+			exit(8);
+			break;           //执行到相应程序跳出switch
+		}
+	}
+}
+
+//其他函数
+
+void menu()   //主菜单
+{
+	printf("\n\n");
+	printf("                         职工信息管理系统                           \n\n");
+	printf("*****************************************************************\n");
+	printf("*          1.录入职工信息");	printf("	§	2.浏览职工信息          *\n");
+	printf("*          3.查询职工信息");	printf("	§	4.删除职工信息          *\n");
+	printf("*          5.修改职工信息");	printf("	§	6.职工信息排序          *\n");
+	printf("*          7.添加职工信息");	printf("	§	8.退出职工系统          *\n");
+	printf("*****************************************************************\n");
+	printf("\n");
+}
+
+void input()       //录入职工信息
+{
+	int i, m, num;
+	char s = 'W';
+	char t = 'M';
+	char sex;
+	printf("尊敬的领导，请您输入需要创建信息的职工人数: ");
+	scanf("%d", &m);
+	system("cls");
+	printf("\n");
+	for (i = 0; i < m; i++)      //循环录入m个职工信息
+	{
+		printf("第%d个员工信息输入：\n", i + 1);
+		printf("请输入职工号： ");
+		scanf("%d", &num);
+		for (int j = 0; j < i; j++)
+			while (worker[j].Number == num)    //判断输入的职工号是否与原来的重复
+			{
+				printf("职工号为 %d 的员工已存在，请重新输入：\n", num);
+				scanf("%d", &num);
+			}
+		worker[i].Number = num;         //将重新输入的职工号录入程序中
+		printf("请输入姓名：  ");
+		scanf("%s", &worker[i].name);
+		do
+		{
+			printf("请输入性别（W/M）：  ");
+			getchar();
+			scanf("%c", &worker[i].sex);
+			if (worker[i].sex == s || worker[i].sex == t)
+			{
+				break;
+			}
+			else
+			{
+
+				printf("对不起，您输入格式错误，请重新输入！\n");
+
+			}
+		} while (1);
+		printf("请输入出生日期：  ");
+		scanf("%s", &worker[i].date);
+		printf("请输入学历：  ");
+		scanf("%s", worker[i].education);
+
+		do
+		{
+			printf("请输入工资：  ");
+			scanf("%f", &worker[i].wages);
+			if (worker[i].wages > 0)
+			{
+				break;
+			}
+			else
+			{
+
+				printf("对不起，您输入格式错误，请重新输入！\n");
+
+			}
+		} while (1);
+
+		printf("请输入住址：  ");
+		scanf("%s", worker[i].addr);
+
+		do
+		{
+			printf("请输入电话：  ");
+			scanf("%d", &worker[i].Tel);
+			if (worker[i].Tel > 0)
+			{
+				break;
+			}
+			else
+			{
+
+				printf("对不起，您输入格式错误，请重新输入！\n");
+
+			}
+		} while (1);
+		system("cls");
+		printf("\n一个新职工的信息创建完成！\n\n");
+	}
+	save(m);      //保存入文件中
+}
+
+
+void save(int m)  //保存文件函数 
+{
+	int i;
+	FILE* fp;
+	if ((fp = fopen("D:\\work_list.txt", "wb")) == NULL) /*创建文件并判断是否能打开*/
+	{
+		printf("cannot open file!\n");
+		exit(0);
+	}
+	for (i = 0; i < m; i++) /*将内存中职工的信息输出到磁盘文件中去*/
+		if (fwrite(&worker[i], sizeof(struct work), 1, fp) != 1)
+			printf("file write error!\n");
+	fclose(fp);
+}
+
+int read()  //导入函数 
+{
+	FILE* fp;
+	int i = 0;
+	if ((fp = fopen("D:\\work_list.txt", "rb")) == NULL)
+	{
+		printf("cannot open file!\n");
+		exit(0);
+	}
+	else
+	{
+		do {
+			fread(&worker[i], sizeof(struct work), 1, fp);
+			i++;
+		} while (feof(fp) == 0);
+	}
+	fclose(fp);
+	return(i - 1);
+}
+
+
+
+
+
+
+
+void display()  //浏览职工信息
+{
+	int i;
+	int m = read();   //读取文件
+	printf("\n贵公司所有职工信息:\n");
+	printf("\n职工号\t姓名\t性别\t出生\t\t学历\t工资\t住址\t\t电话\n");
+	for (i = 0; i < m; i++)
+		printf("\n%d\t%s\t%c\t%s\t%s\t%5.2f\t%s\t%d\n", worker[i].Number, worker[i].name, worker[i].sex, worker[i].date, worker[i].education, worker[i].wages, worker[i].addr, worker[i].Tel);
+	printf("\n");
+}
+
+void Delete()   //删除职工信息 
+{
+	int m = read();    //读取文件
+	int i, j, t, n, f, Num;   //f用于调用第一个switch中的函数   t用于下面第二个switch语句调用Delete和返回   n用于下面确认是否删除 
+	display();  //调用浏览职工信息函数
+	printf("请您输入要删除的职工的职工号(大佬您不在考虑考虑嘛！):  ");
+	scanf("%d", &Num);
+	for (i = 0, f = 1; f && i < m; i++)           //遍历全部职员
+	{
+		if (worker[i].Number == Num)    //判断输入职工号是否与原职工号相同
+		{
+			printf("\n已找到此人，原始记录为：\n");
+			printf("\n职工号\t姓名\t性别\t出生日期\t学历\t    工资\t住址\t 电话    \n");
+			printf("\n  %d\t%s\t  %c\t %s\t%s\t %9.2f\t%s\t%d\n", worker[i].Number, worker[i].name, worker[i].sex, worker[i].date, worker[i].education, worker[i].wages, worker[i].addr, worker[i].Tel);
+			printf("\n确认删除请按 1(出来混口饭吃都不容易！请您三思！！！)，取消删除请按 0: ");
+			scanf("%d", &n);
+			if (n == 1)   //如果删除，则其他的信息都向前移一行  
+			{
+				for (j = i; j < m - 1; j++)
+					worker[j] = worker[j + 1];      //当找到第j个职工时,for语句后j自加了1,所以下面的应该把改后的信息赋值给第j-1个人     
+				f = 0;
+			}
+			else f = 2;
+		}
+
+	}
+	system("cls");
+	switch (f) {
+	case 0: m = m - 1;
+		printf("\n\t\t\t\t删除成功！(卧槽无情！)\n");
+		save(m);     //调用保存函数    
+		display();  //调用浏览函数
+		break;
+	case 1: printf("\n\t\t\t对不起，贵公司没有该员工!\n");
+		display();  //调用浏览函数
+		break;
+	case 2: printf("\n\t\t\t\t取消删除！\n");
+		break;
+	}
+	//display();  /*调用浏览函数*/
+	printf("\n继续删除请按1，返回主菜单请按0: ");
+	scanf("%d", &t);    //输入t调用switch中的函数
+	system("cls");
+	switch (t)
+	{
+	case 1:  Delete();
+		break;
+	case 0:  system("cls");
+		main();
+		break;
+	default: break;
+	}
+	system("cls");
+}
+
+void add()  //添加职工信息
+{
+	int n = read();   //读取文件
+	int i, m, num = 0;
+	char s = 'W';
+	char t = 'M';
+	printf("请您输入需要添加信息的职工人数: ");
+	scanf("%d", &m);
+	if (m + n > 100) {
+		system("cls");
+		printf("\n对不起，您所构建的职工人数超出范围。请重新输入（0至%d之间）：\n\n", 100 - n);
+		add();       //重新调用add()函数
+	}
+	else {
+		for (i = n; i < m + n; i++)
+		{
+			printf("第%d个员工信息输入（按Enter确认输入）： \n", i + 1);
+			printf("请输入职工号： ");
+			scanf("%d", &num);
+			for (int j = 0; j < i; j++)
+				while (worker[j].Number == num)    //判断输入职工号是否与原职工号重复
+				{
+					printf("职工号为 %d 的员工已存在，请重新输入\n", num);
+					scanf("%d", &num);    //重新输入职工号
+
+				}
+			worker[i].Number = num;
+			printf("请输入姓名：  ");
+			scanf("%s", worker[i].name);
+			do
+			{
+				printf("请输入性别（W/M）：  ");
+				getchar();
+				scanf("%c", &worker[i].sex);
+				if (worker[i].sex == s || worker[i].sex == t)
+				{
+					break;
+				}
+				else
+				{
+
+					printf("对不起，您输入格式错误，请重新输入！\n");
+
+				}
+			} while (1);
+			printf("请输入出生日期：  ");
+			scanf("%s", &worker[i].date);
+			printf("请输入学历：  ");
+			scanf("%s", &worker[i].education);
+
+			do
+			{
+				printf("请输入工资：  ");
+				scanf("%f", &worker[i].wages);
+				if (worker[i].wages > 0)
+				{
+					break;
+				}
+				else
+				{
+
+					printf("对不起，您输入格式错误，请重新输入！\n");
+
+				}
+			} while (1);
+
+			printf("请输入住址：  ");
+			scanf("%s", &worker[i].addr);
+			printf("请输入电话：  ");
+			scanf("%d", &worker[i].Tel);
+			system("cls");
+			printf("\n一个职工的信息档案创建完毕！请输入下一个职工的信息\n");
+			printf("\n");
+		}
+		save(m + n);    //调用save并保存文件
+		system("cls");
+		printf("\n添加职工信息完成!  \n");
+		display();    //调用display函数 浏览全部信息
+		printf("\n按Enter键继续\n");
+		getchar();  //吸收回车
+		getchar();  //吸收回车
+		system("cls");
+	}
+}
+
+void search()//查询职工信息
+{
+	int t;
+	do {
+		printf("\n 姓名查询请按 1;   职工号查询请按 2;  进入主菜单请按 0 : ");
+		scanf("%d", &t);     //输入数字对应操作选项
+		if (t >= 0 && t <= 3)
+		{
+			break;
+		}
+		else { printf("您输入有误，请重新选择!"); }
+	} while (0);
+	system("cls");
+	while (1)
+	{
+		switch (t)
+		{
+		case 0: main();
+			break;
+		case 1: printf("\n按姓名查询\n");
+			search_name();
+			break;
+		case 2: printf("\n按职工号查询\n");
+			search_NUMS();
+			break;
+		default:break;
+		}
+		system("cls");
+	}
+}
+
+void search_name()//按姓名查找职工信息 
+{
+	char name1[20];   //定义一个数组指向字符串
+	int i, t, n = 0;
+	int m = read();
+	printf("\n请输入要查找的姓名:  ");
+	scanf("%s", name1);
+	for (i = 0; i < m; i++)    //遍历  
+		if (strcmp(name1, worker[i].name) == 0) //strcmp对两个字符串的大小进行比较
+		{
+			if (n == 0)
+			{
+				printf("\n已找到以下信息：\n");
+				printf("\n职工号\t姓名\t性别\t出生\t学历\t工资\t住址\t电话 \n");
+			}
+			n++;
+			printf("\n  %d\t%s\t%c\t%s\t%s\t%5.2f\t%s\t%d\n", worker[i].Number, worker[i].name, worker[i].sex, worker[i].date, worker[i].education, worker[i].wages, worker[i].addr, worker[i].Tel);
+		}
+	if (n == 0)  //没有一个符合条件
+	{
+		printf("\n对不起，贵公司没有该员工!\n");
+		getchar();
+		getchar();
+	}
+	else
+	{
+		printf("\n查询到有 %d 个员工符合要求。\n", n);
+		printf("\n");
+		printf("删除员工请按 1，修改信息请按 2，继续查询请按 3，返回上一层请按 4，返回主菜单请按 0 ：");
+		scanf("%d", &t);       //输入数字对应操作选项
+		switch (t)
+		{
+		case 0: system("cls");
+			main();
+			break;
+		case 1: Delete();
+			break;
+		case 2: change();
+			break;
+		case 3: break;
+		case 4: system("cls");
+			search();
+			break;
+		default:break;
+		}
+	}
+}
+void search_NUMS()//按职工号查找职工信息
+{
+	int num1;
+	int i, t, n = 0;
+	int m = read();
+	printf("\n请输入要查找的职工号:  ");
+	scanf("%d", &num1);
+	for (i = 0; i < m; i++)    //遍历  
+		if (num1 == worker[i].Number)
+		{
+			if (n == 0)
+			{
+				printf("\n已找到以下信息：\n");
+				printf("\n职工号\t姓名\t性别\t出生\t学历\t工资\t住址\t电话\n");
+			}
+			n++;
+			printf("\n  %d\t%s\t%c\t%s\t%s\t%5.2f\t%s\t%d\n", worker[i].Number, worker[i].name, worker[i].sex, worker[i].date, worker[i].education, worker[i].wages, worker[i].addr, worker[i].Tel);
+		}
+	if (n == 0)  //没有一个符合条件
+	{
+		printf("\n对不起，贵公司没有该员工!\n");
+		getchar();
+		getchar();
+	}
+	else
+	{
+		printf("\n查询到有 %d 个员工符合要求。\n", n);
+		printf("\n");
+		printf("删除员工请按 1，修改信息请按 2，继续查询请按 3，返回上一层请按 4，返回主菜单请按 0 ：");
+		scanf("%d", &t);       //输入数字对应操作选项
+		switch (t)
+		{
+		case 0: system("cls");
+			main();
+			break;
+		case 1: Delete();
+			break;
+		case 2: change();
+			break;
+		case 3: break;
+		case 4: system("cls");
+			search();
+			break;
+		default:break;
+		}
+	}
+}
+
+void change()     //修改职工信息 
+{
+	int Number;       //职工号
+	char name[20];     //姓名
+	char sex;        // 性别
+	char  date[20];          // 出生日期
+	char education[20]; //学历
+	float wages;        //工资
+	char  addr[20];     //住址
+	int Tel=0;      //电话
+	int b = 1, c, i, n, t, k = 0, g;
+	int m = read();               //导入文件内的信息
+	printf("\n");
+	printf("请输入要修改的职工的职工号:  ");
+	scanf("%d", &Number);
+	system("cls");
+	for (i = 0; i < m; i++)
+	{
+		if (worker[i].Number == Number)    //判断输入的职工号是否与原职工号相同
+		{
+			k = 1;
+			printf("\n已找到该职工号员工，其记录为：\n");
+			printf("\n职工号\t姓名\t性别\t出生日期\t学历\t    工资\t住址\t 电话    \n");
+			printf("\n  %d\t%s\t  %c\t %s\t%s\t %9.2f\t%s\t%d\n", worker[i].Number, worker[i].name, worker[i].sex, worker[i].date, worker[i].education, worker[i].wages, worker[i].addr, worker[i].Tel);			printf("\n确认修改请按1，取消修改请按0：");
+			scanf("%d", &n);
+			if (n == 1)
+			{
+				printf("\n需要进行修改的选项\n 1.职工号  2.姓名  3.性别  4.出生日期  5.学历  6.工资  7.住址  8.电话  \n");
+				printf("请输入你想修改的那一项序号:  ");
+				scanf("%d", &c);               //输入数字对应操作选项   
+				do {
+					switch (c)
+					{
+					case 1: printf("职工号改为: ");
+						scanf("%d", &g);
+						for (int i = 0; i < m; i++)
+							while (worker[i].Number == g)    //判断输入的职工号是否与原来的重复
+							{
+								printf("职工号为 %d 的员工已存在，请重新输入：\n", g);
+								scanf("%d", &g);
+							}
+						worker[i].Number = g;         //将重新输入的职工号录入程序中
+						break;
+					case 2: printf("姓名改为: ");
+						scanf("%s", name);
+						strcpy(worker[i].name, name);
+						break;
+					case 3: printf("性别改为：");
+						getchar();
+						scanf("%c", &sex);
+						worker[i].sex = sex;
+						break;
+					case 4: printf("出生日期改为: ");
+						scanf("%s", &date);
+						strcpy(worker[i].date, date);
+						break;
+					case 5: printf("学历改为: ");
+						scanf("%s", education);
+						strcpy(worker[i].education, education);
+						break;
+					case 6: printf("基本工资改为: ");
+						scanf("%f", &wages);
+						worker[i].wages = wages;
+						break;
+					case 7: printf("住址改为: ");
+						scanf("%s", &addr);
+						strcpy(worker[i].addr, addr);
+						break;
+					case 8: printf("电话改为: ");
+						scanf("%d", Tel);
+						worker[i].Tel = Tel;
+						break;
+					}
+					printf("\n确认修改 请按1，重新输入 请按2:   ");
+					scanf("%d", &b);
+					if (b == 1)
+					{
+						system("cls");
+						save(m);//储存修改后的数据
+						printf("\n");
+						display();//浏览修改后的数据
+					}
+				} while (b == 2);
+			}
+		}
+
+		else if (i == (m - 1)) i++;
+	}
+	if (k == 0) {
+		printf("\n对不起，您输入有误!\n");
+		getchar();
+		getchar();
+	}
+	else {
+		printf("\n继续修改请按 1，退出修改请按 0:  ");
+		scanf("%d", &t);
+	}
+	system("cls");
+	switch (t)
+	{
+	case 1: display();
+		change();//返回修改函数
+		break;
+	case 0: break;
+	default:break;
+	}
+	system("cls");
+}
+
+void sort()//排序职工信息    
+{
+	int d;
+	do {
+		printf("\n职工号排序请按 1：； 返回主菜单请按 0:  ");
+		scanf("%d", &d);
+		if (d >= 0 && d <= 1)
+		{
+			break;
+		}
+		else
+		{
+			printf("对不起，您输入有误，请重新选择!");
+		}
+	} while (0);
+	system("cls");
+	while (1) {
+		switch (d)
+		{
+		case 1: printf("\n按职工号排序为(数字由小到大排列)：\n");
+			sort_Num();
+			break;
+		case 0: system("cls");
+			main();
+			break;
+
+		}
+		system("cls");
+	}
+}
+
+void sort_Num()//按职工号排序函数    //浏览信息时按照职工号由小到大顺序排序
+{
+	int i, j, k;
+	int m = read();
+	for (i = 0; i < m - 1; i++)
+		for (j = 0; j < m - 1 - i; j++)
+			if (worker[j].Number > worker[j + 1].Number)//排序   
+			{
+				worker1 = worker[j];
+				worker[j] = worker[j + 1];
+				worker[j + 1] = worker1;
+			}
+	save(m); //按职工号由小到大的顺序存储
+	printf("\n职工号\t姓名\t性别\t年龄\t学历\t    工资\t住址\t 电话    \n");
+	for (i = 0; i < m; i++)
+		printf("\n  %d\t%s\t  %c\t %s\t%s\t %9.2f\t%s\t%d\n", worker[i].Number, worker[i].name, worker[i].sex, worker[i].date, worker[i].education, worker[i].wages, worker[i].addr, worker[i].Tel);			printf("\n确认修改请按1，取消修改请按0：");
+	scanf("%d", &k);
+	switch (k)
+	{
+	case 1: system("cls");
+		sort(); //调用排序函数
+		break;
+	case 0: system("cls");
+		main();
+		break;
+	default:break;
+	}
+	system("cls");
+}
+
+
